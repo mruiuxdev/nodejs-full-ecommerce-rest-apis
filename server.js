@@ -4,16 +4,32 @@ const morgan = require("morgan");
 const connectDB = require("./config/db");
 const { Schema, default: mongoose } = require("mongoose");
 const categoryRoute = require("./routes/category.route");
+const APIError = require("./utils/apiError");
+const globalError = require("./middlewares/error.middleware");
 
+//* Read ENV
 dotenv.config({ path: ".env" });
+//* Connect Database
 connectDB();
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 if (process.env.NODE_ENV === "dev") app.use(morgan("dev"));
 
+//* Routes
 app.use("/v1/categories", categoryRoute);
+
+//! In case no route found
+//* @ another solution app.all("/*splat", () => {})
+app.use((req, res, next) => {
+  next(new APIError(`Cannot find this route: ${req.originalUrl}`, 404));
+});
+
+//* "Global" Error handling middleware
+app.use(globalError);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
