@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.NODE_ENV === "dev") app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 //* Routes
 app.use("/v1/categories", categoryRoute);
@@ -28,10 +28,19 @@ app.use((req, res, next) => {
   next(new APIError(`Cannot find this route: ${req.originalUrl}`, 404));
 });
 
-//* "Global" Error handling middleware
+//* "Global" Error handling middleware express
 app.use(globalError);
 
 const port = process.env.PORT || 8000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is listening on Port ${port}`);
+});
+
+//* Handle any unhandled rejection not have control on
+process.on("unhandledRejection", (err) => {
+  console.error(`UnhandledRejection errors: ${err.name} | ${err.message}`);
+  server.close(() => {
+    console.error("Server is shutting down...");
+    process.exit(1);
+  });
 });

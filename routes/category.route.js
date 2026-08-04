@@ -6,14 +6,23 @@ const {
   updateCategoryById,
   deleteCategoryById,
 } = require("../controllers/category.controller");
+const {
+  createCategoryValidator,
+  getCategoryValidatorById,
+  deleteCategoryValidatorById,
+  updateCategoryValidatorById,
+} = require("../utils/validators/category.validator");
 
 const router = express.Router();
 
-router.route("/").get(getCategories).post(createCategory);
+router
+  .route("/")
+  .get(getCategories)
+  .post(createCategoryValidator, createCategory);
 router
   .route("/:id")
-  .get(getCategoryById)
-  .put(updateCategoryById)
-  .delete(deleteCategoryById);
+  .get(getCategoryValidatorById, getCategoryById)
+  .put(updateCategoryValidatorById, updateCategoryById)
+  .delete(deleteCategoryValidatorById, deleteCategoryById);
 
 module.exports = router;
