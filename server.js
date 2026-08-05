@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
-const { Schema, default: mongoose } = require("mongoose");
 const categoryRoute = require("./routes/category.route");
 const APIError = require("./utils/apiError");
 const globalError = require("./middlewares/error.middleware");

@@ -1,4 +1,4 @@
-const globalError = (err, req, res, next) => {
+const globalError = (err, req, res) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
@@ -14,14 +14,14 @@ const sendErrorForDev = (err, res) => {
     status: err.status,
     error: err,
     message: err.message,
-    stack: err.stack,
+    stack: err.stack
   });
 };
 
 const sendErrorForProd = (err, res) => {
   return res.status(err.statusCode).json({
     status: err.status,
-    message: err.message,
+    message: err.message
   });
 };
 

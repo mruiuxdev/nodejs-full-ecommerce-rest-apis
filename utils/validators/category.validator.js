@@ -1,9 +1,9 @@
-const { check, body } = require("express-validator");
+const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validator.middleware");
 
 const getCategoryValidatorById = [
   check("id").isMongoId().withMessage("Invalid category id"),
-  validatorMiddleware,
+  validatorMiddleware
 ];
 
 const updateCategoryValidatorById = [
@@ -15,12 +15,12 @@ const updateCategoryValidatorById = [
     .withMessage("Too short category name")
     .isLength({ max: 30 })
     .withMessage("Too long category name"),
-  validatorMiddleware,
+  validatorMiddleware
 ];
 
 const deleteCategoryValidatorById = [
   check("id").isMongoId().withMessage("Invalid category id"),
-  validatorMiddleware,
+  validatorMiddleware
 ];
 
 const createCategoryValidator = [
@@ -31,12 +31,12 @@ const createCategoryValidator = [
     .withMessage("Too short category name")
     .isLength({ max: 30 })
     .withMessage("Too long category name"),
-  validatorMiddleware,
+  validatorMiddleware
 ];
 
 module.exports = {
   createCategoryValidator,
   getCategoryValidatorById,
   updateCategoryValidatorById,
-  deleteCategoryValidatorById,
+  deleteCategoryValidatorById
 };
