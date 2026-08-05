@@ -25,7 +25,6 @@ module.exports = [
           varsIgnorePattern: "^_"
         }
       ],
-
       "no-undef": "error",
       "no-unreachable": "error",
       "no-constant-condition": "error",

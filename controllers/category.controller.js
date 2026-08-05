@@ -6,7 +6,7 @@ const APIError = require("../utils/apiError");
 //* @desc Get list of categories
 //* @route GET /categories
 //* @access Public
-const getCategories = asyncHandler(async (req, res) => {
+const getCategories = asyncHandler(async (req, res, _next) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
@@ -69,7 +69,7 @@ const deleteCategoryById = asyncHandler(async (req, res, next) => {
 //* @desc Create category
 //* @route POST /categories
 //* @access Private
-const createCategory = asyncHandler(async (req, res) => {
+const createCategory = asyncHandler(async (req, res, _next) => {
   const { name } = req.body;
 
   const category = await Category.create({ name, slug: slugify(name) });

@@ -2,9 +2,10 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
-const categoryRoute = require("./routes/category.route");
 const APIError = require("./utils/apiError");
 const globalError = require("./middlewares/error.middleware");
+const categoryRoute = require("./routes/category.route");
+const subCategoryRoute = require("./routes/subCategory.route");
 
 //* Read ENV
 dotenv.config({ path: ".env" });
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 //* Routes
 app.use("/v1/categories", categoryRoute);
+app.use("/v1/subcategories", subCategoryRoute);
 
 //! In case no route found
 //* @ another solution app.all("/*splat", () => {})

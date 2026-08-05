@@ -4,19 +4,21 @@ const subCategorySchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
       required: [true, "Subcategory required"],
       unique: [true, "Subcategory must by unique"],
-      minlength: [3, "Too short subcategory name"],
+      minlength: [2, "Too short subcategory name"],
       maxlength: [32, "Too long subcategory name"]
     },
     slug: {
       type: String,
-      lowercase: true
+      lowercase: true,
+      trim: true
     },
     category: {
       type: mongoose.Schema.ObjectId,
       ref: "Category",
-      unique: true
+      required: [true, "Category is required"]
     }
   },
   { timestamps: true }
