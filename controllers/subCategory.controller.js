@@ -7,12 +7,23 @@ const Category = require("../models/category.model");
 //* @desc Get list subcategories
 //* @route GET /subcategories
 //* @access Public
+const createFilterObj = (req, res, next) => {
+  const { categoryId } = req.params;
+
+  let filterObject = {};
+
+  if (categoryId) filterObject = { category: categoryId };
+
+  req.filterObject = filterObject;
+
+  next();
+};
 const getSubCategories = asyncHandler(async (req, res, _next) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
 
-  const subCategories = await SubCategory.find()
+  const subCategories = await SubCategory.find(req.filterObject)
     .skip(skip)
     .limit(limit)
     .populate({
@@ -46,12 +57,16 @@ const getSubCategoryById = asyncHandler(async (req, res, next) => {
 //* @desc Create subcategory
 //* @route POST /subcategories
 //* @access Private
+const setCategoryIdBody = (req, _res, next) => {
+  if (!req.body.categoryId) req.body.category = req.params.categoryId;
+  next();
+};
 const createSubCategory = asyncHandler(async (req, res, next) => {
   const { name, category } = req.body;
 
-  const categoryId = await Category.findById(category);
+  const isCategoryFound = await Category.findById(category);
 
-  if (!categoryId) {
+  if (!isCategoryFound) {
     return next(new APIError("Category not found", 404));
   }
 
@@ -106,8 +121,12 @@ const deleteSubcategoryById = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
+  setCategoryIdBody,
   createSubCategory,
+
+  createFilterObj,
   getSubCategories,
+
   getSubCategoryById,
   updateSubcategoryById,
   deleteSubcategoryById
