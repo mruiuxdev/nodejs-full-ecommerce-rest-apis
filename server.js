@@ -6,6 +6,7 @@ const APIError = require("./utils/apiError");
 const globalError = require("./middlewares/error.middleware");
 const categoryRoute = require("./routes/category.route");
 const subCategoryRoute = require("./routes/subCategory.route");
+const brandRoute = require("./routes/brand.route");
 
 //* Read ENV
 dotenv.config({ path: ".env" });
@@ -22,6 +23,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 //* Routes
 app.use("/v1/categories", categoryRoute);
 app.use("/v1/subcategories", subCategoryRoute);
+app.use("/v1/brands", brandRoute);
 
 //! In case no route found
 //* @ another solution app.all("/*splat", () => {})
