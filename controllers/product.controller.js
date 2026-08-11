@@ -37,6 +37,17 @@ const getProductById = asyncHandler(async (req, res, next) => {
   }
 });
 
+//* @desc Create product
+//* @route POST /products
+//* @access Private
+const createProduct = asyncHandler(async (req, res, _next) => {
+  req.body.slug = slugify(req.body.name);
+
+  const product = await Product.create(req.body);
+
+  res.status(201).json({ data: product });
+});
+
 //* @desc Update specific product by id
 //* @route PUT /products/:id
 //* @access Private
@@ -66,17 +77,6 @@ const deleteProductById = asyncHandler(async (req, res, next) => {
   } else {
     res.status(200).json({ msg: "Product deleted successfully!" });
   }
-});
-
-//* @desc Create product
-//* @route POST /products
-//* @access Private
-const createProduct = asyncHandler(async (req, res, _next) => {
-  req.body.slug = slugify(req.body.name);
-
-  const product = await Product.create(req.body);
-
-  res.status(201).json({ data: product });
 });
 
 module.exports = {
