@@ -31,12 +31,12 @@ const productSchema = new Schema(
       type: Number,
       required: [true, "Product price is required"],
       trim: true,
-      max: [20, "Too long product price"]
+      max: [20000, "Too long product price"]
     },
     priceAfterDiscount: {
       type: Number,
       trim: true,
-      max: [20, "Too long product price"]
+      max: [20000, "Too long product price"]
     },
     colors: [String],
     imageCover: {
