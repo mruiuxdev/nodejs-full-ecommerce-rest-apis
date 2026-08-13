@@ -93,6 +93,23 @@ const createProductValidator = [
           }
         }
       )
+    )
+    .custom((val, { req }) =>
+      SubCategory.find({ category: req.body.category }).then(
+        (subCategories) => {
+          const subCategoriesIds = [];
+
+          subCategories.forEach((subCategory) =>
+            subCategoriesIds.push(subCategory._id.toString())
+          );
+
+          if (!val.every((v) => subCategoriesIds.includes(v))) {
+            return Promise.reject(
+              new Error("Sub categories must be belong to parent category")
+            );
+          }
+        }
+      )
     ),
   check("brand").optional().isMongoId().withMessage("Brand id is invalid"),
   check("ratingsAverage")
