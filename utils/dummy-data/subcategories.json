@@ -1,0 +1,7 @@
+[
+  { "name": "Phones", "categoryName": "Electronics" },
+  { "name": "Laptops", "categoryName": "Electronics" },
+  { "name": "Men Fashion", "categoryName": "Clothing" },
+  { "name": "Women Fashion", "categoryName": "Clothing" },
+  { "name": "Kitchen Tools", "categoryName": "Home and Kitchen" }
+]

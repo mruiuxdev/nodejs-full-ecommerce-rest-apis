@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Smartphone Pro",
+    "description": "A modern smartphone with a bright display and an all-day battery.",
+    "quantity": 25,
+    "price": 14999,
+    "colors": ["black", "silver"],
+    "imageCover": "smartphone-pro-cover.jpg",
+    "images": ["smartphone-pro-1.jpg", "smartphone-pro-2.jpg"],
+    "sold": 3,
+    "priceAfterDiscount": 13999,
+    "ratingsAverage": 4.5,
+    "ratingsQuantity": 12,
+    "categoryName": "Electronics",
+    "subCategoryNames": ["Phones"],
+    "brandName": "Nova Tech"
+  },
+  {
+    "name": "Everyday Laptop",
+    "description": "A lightweight laptop suitable for daily work, study, and entertainment.",
+    "quantity": 15,
+    "price": 18999,
+    "colors": ["gray"],
+    "imageCover": "everyday-laptop-cover.jpg",
+    "categoryName": "Electronics",
+    "subCategoryNames": ["Laptops"],
+    "brandName": "Nova Tech"
+  },
+  {
+    "name": "Cotton T Shirt",
+    "description": "A comfortable cotton t-shirt designed for casual everyday wear.",
+    "quantity": 50,
+    "price": 499,
+    "colors": ["white", "navy"],
+    "imageCover": "cotton-t-shirt-cover.jpg",
+    "categoryName": "Clothing",
+    "subCategoryNames": ["Men Fashion"],
+    "brandName": "Urban Thread"
+  },
+  {
+    "name": "Cooking Utensil Set",
+    "description": "A practical utensil set containing essential tools for home cooking.",
+    "quantity": 30,
+    "price": 899,
+    "colors": ["black"],
+    "imageCover": "cooking-utensil-set-cover.jpg",
+    "categoryName": "Home and Kitchen",
+    "subCategoryNames": ["Kitchen Tools"],
+    "brandName": "Home Craft"
+  }
+]

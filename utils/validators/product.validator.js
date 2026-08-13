@@ -94,6 +94,7 @@ const createProductValidator = [
         }
       )
     )
+    //* Check if subcategories belong to parent category in DB
     .custom((val, { req }) =>
       SubCategory.find({ category: req.body.category }).then(
         (subCategories) => {

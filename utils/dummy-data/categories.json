@@ -1,0 +1,5 @@
+[
+  { "name": "Electronics", "image": "electronics.png" },
+  { "name": "Clothing", "image": "clothing.png" },
+  { "name": "Home and Kitchen", "image": "home-and-kitchen.png" }
+]

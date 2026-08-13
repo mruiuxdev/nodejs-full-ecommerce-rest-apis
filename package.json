@@ -6,6 +6,8 @@
   "scripts": {
     "start:prod": "cross-env NODE_ENV=production node server.js",
     "start:dev": "node --watch server.js",
+    "seed:import": "node utils/dummy-data/seeder.js --import",
+    "seed:delete": "node utils/dummy-data/seeder.js --delete",
      "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "colors": "^1.4.0",
     "cross-env": "^10.1.0",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
