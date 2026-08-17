@@ -9,7 +9,7 @@ const APIError = require("../utils/apiError");
 const getProducts = asyncHandler(async (req, res, _next) => {
   //* Exclude filter queries
   const queryStringObj = { ...req.query };
-  const excludesFields = ["page", "sort", "limit", "fields"]; // These fields are API control parameters, not MongoDB filters
+  const excludesFields = ["page", "sort", "limit", "fields", "search"]; // These fields are API control parameters, not MongoDB filters
 
   excludesFields.forEach((field) => delete queryStringObj[field]);
 
@@ -23,7 +23,38 @@ const getProducts = asyncHandler(async (req, res, _next) => {
   const skip = (page - 1) * limit;
 
   //* Build query
-  const mongooseQuery = Product.find(JSON.parse(queryStr));
+  let mongooseQuery = Product.find(JSON.parse(queryStr));
+
+  //* Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+
+    mongooseQuery = mongooseQuery.sort(sortBy);
+  } else {
+    mongooseQuery = mongooseQuery.sort("-createdAt");
+  }
+
+  //* Fields limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+
+    mongooseQuery = mongooseQuery.select(fields);
+  } else {
+    mongooseQuery = mongooseQuery.select("-__v");
+  }
+
+  //* Search
+  if (req.query.search) {
+    const query = {};
+
+    query.$or = [
+      { name: { $regex: req.query.search, $options: "i" } },
+      { description: { $regex: req.query.search, $options: "i" } }
+    ];
+
+    mongooseQuery = mongooseQuery.find(query);
+  }
+
   //* Execute query
   const products = await mongooseQuery
     //* Another option filtration
