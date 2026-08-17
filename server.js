@@ -18,6 +18,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+//* Parsing the nested query
+app.set("query parser", "extended");
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 

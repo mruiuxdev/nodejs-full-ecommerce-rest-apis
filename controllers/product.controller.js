@@ -7,14 +7,33 @@ const APIError = require("../utils/apiError");
 //* @route GET /products
 //* @access Public
 const getProducts = asyncHandler(async (req, res, _next) => {
+  //* Exclude filter queries
+  const queryStringObj = { ...req.query };
+  const excludesFields = ["page", "sort", "limit", "fields"]; // These fields are API control parameters, not MongoDB filters
+
+  excludesFields.forEach((field) => delete queryStringObj[field]);
+
+  //* {price: {$gte: 50}, ratingsAverage: {$gte: 4}} => Mongoose query
+  //* {price: {gte: '50'}, ratingsAverage: {gte: '4'}} => Req query "{{dev__localhost}}/products?price[gte]=50&ratingsAverage[gte]=4"
+  let queryStr = JSON.stringify(queryStringObj);
+  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 5;
+  const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
 
-  const products = await Product.find()
+  //* Build query
+  const mongooseQuery = Product.find(JSON.parse(queryStr));
+  //* Execute query
+  const products = await mongooseQuery
+    //* Another option filtration
+    // .where("price")
+    // .equals(req.query.price)
+    // .where("ratingsAverage")
+    // .equals(req.query.ratingsAverage)
     .skip(skip)
     .limit(limit)
-    .populate({ path: "category subCategory", select: "name -_id" });
+    .populate({ path: "category subCategories", select: "name -_id" });
 
   res.status(200).json({ results: products.length, page, data: products });
 });
@@ -26,7 +45,7 @@ const getProductById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const product = await Product.findById(id).populate({
-    path: "category subCategory",
+    path: "category subCategories",
     select: "name -_id"
   });
 
