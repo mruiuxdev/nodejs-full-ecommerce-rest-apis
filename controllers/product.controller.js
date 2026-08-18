@@ -2,71 +2,39 @@ const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/product.model");
 const APIError = require("../utils/apiError");
+const APIFeatures = require("../utils/apiFeature");
 
 //* @desc Get list of products
 //* @route GET /products
 //* @access Public
 const getProducts = asyncHandler(async (req, res, _next) => {
-  //* Exclude filter queries
-  const queryStringObj = { ...req.query };
-  const excludesFields = ["page", "sort", "limit", "fields", "search"]; // These fields are API control parameters, not MongoDB filters
-
-  excludesFields.forEach((field) => delete queryStringObj[field]);
-
-  //* {price: {$gte: 50}, ratingsAverage: {$gte: 4}} => Mongoose query
-  //* {price: {gte: '50'}, ratingsAverage: {gte: '4'}} => Req query "{{dev__localhost}}/products?price[gte]=50&ratingsAverage[gte]=4"
-  let queryStr = JSON.stringify(queryStringObj);
-  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 50;
-  const skip = (page - 1) * limit;
-
   //* Build query
-  let mongooseQuery = Product.find(JSON.parse(queryStr));
-
-  //* Sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-
-    mongooseQuery = mongooseQuery.sort(sortBy);
-  } else {
-    mongooseQuery = mongooseQuery.sort("-createdAt");
-  }
-
-  //* Fields limiting
-  if (req.query.fields) {
-    const fields = req.query.fields.split(",").join(" ");
-
-    mongooseQuery = mongooseQuery.select(fields);
-  } else {
-    mongooseQuery = mongooseQuery.select("-__v");
-  }
-
-  //* Search
-  if (req.query.search) {
-    const query = {};
-
-    query.$or = [
-      { name: { $regex: req.query.search, $options: "i" } },
-      { description: { $regex: req.query.search, $options: "i" } }
-    ];
-
-    mongooseQuery = mongooseQuery.find(query);
-  }
+  const countDocs = await Product.countDocuments();
+  const apiFeatures = new APIFeatures(Product.find(), req.query)
+    .paginate(countDocs)
+    .filter()
+    .sort()
+    .limitFields()
+    .search();
 
   //* Execute query
-  const products = await mongooseQuery
-    //* Another option filtration
-    // .where("price")
-    // .equals(req.query.price)
-    // .where("ratingsAverage")
-    // .equals(req.query.ratingsAverage)
-    .skip(skip)
-    .limit(limit)
-    .populate({ path: "category subCategories", select: "name -_id" });
+  const { mongooseQuery, paginationResult } = apiFeatures;
+  const products = await mongooseQuery;
 
-  res.status(200).json({ results: products.length, page, data: products });
+  /*
+   * Another option filtration
+   * .where("price")
+   * .equals(req.query.price)
+   * .where("ratingsAverage")
+   * .equals(req.query.ratingsAverage)
+   * .populate({ path: "category subCategories", select: "name -_id" });
+   */
+
+  res.status(200).json({
+    results: products.length,
+    paginationResult,
+    data: products
+  });
 });
 
 //* @desc Get specific product by id
