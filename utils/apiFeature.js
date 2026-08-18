@@ -73,14 +73,18 @@ class APIFeatures {
     return this;
   }
 
-  search() {
+  search(modelName) {
     if (this.queryString.search) {
-      const query = {};
+      let query = {};
 
-      query.$or = [
-        { name: { $regex: this.queryString.search, $options: "i" } },
-        { description: { $regex: this.queryString.search, $options: "i" } }
-      ];
+      if (modelName === "Products") {
+        query.$or = [
+          { name: { $regex: this.queryString.search, $options: "i" } },
+          { description: { $regex: this.queryString.search, $options: "i" } }
+        ];
+      } else {
+        query = { name: { $regex: this.queryString.search, $options: "i" } };
+      }
 
       this.mongooseQuery = this.mongooseQuery.find(query);
     }
