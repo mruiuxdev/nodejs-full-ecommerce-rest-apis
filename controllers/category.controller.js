@@ -1,90 +1,36 @@
-const slugify = require("slugify");
-const asyncHandler = require("express-async-handler");
 const Category = require("../models/category.model");
-const APIError = require("../utils/apiError");
-const APIFeatures = require("../utils/apiFeature");
+const {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll
+} = require("./handlerFactory");
 
 //* @desc Get list of categories
 //* @route GET /categories
 //* @access Public
-const getCategories = asyncHandler(async (req, res, _next) => {
-  const countDocs = await Category.countDocuments();
-
-  const apiFeatures = new APIFeatures(Category.find(), req.query)
-    .paginate(countDocs)
-    .search()
-    .limitFields()
-    .sort()
-    .filter();
-  const { mongooseQuery, paginationResult } = apiFeatures;
-
-  const categories = await mongooseQuery;
-
-  res
-    .status(200)
-    .json({ results: categories.length, paginationResult, data: categories });
-});
+const getCategories = getAll(Category);
 
 //* @desc Get specific category by id
 //* @route GET /categories/:id
 //* @access Public
-const getCategoryById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const category = await Category.findById(id);
-
-  if (!category) {
-    return next(new APIError("Category not found", 404));
-  } else {
-    res.status(200).json({ data: category });
-  }
-});
-
-//* @desc Update specific category by id
-//* @route PUT /categories/:id
-//* @access Private
-const updateCategoryById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  const category = await Category.findByIdAndUpdate(
-    id,
-    { name, slug: slugify(name) },
-    { new: true }
-  );
-
-  if (!category) {
-    return next(new APIError("Category not found", 404));
-  } else {
-    res.status(200).json({ data: category });
-  }
-});
-
-//* @desc Delete specific category by id
-//* @route DELETE /categories/:id
-//* @access Private
-const deleteCategoryById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const category = await Category.findByIdAndDelete(id);
-
-  if (!category) {
-    return next(new APIError("Category not found", 404));
-  } else {
-    res.status(200).json({ msg: "Category deleted successfully!" });
-  }
-});
+const getCategoryById = getOne(Category);
 
 //* @desc Create category
 //* @route POST /categories
 //* @access Private
-const createCategory = asyncHandler(async (req, res, _next) => {
-  const { name } = req.body;
+const createCategory = createOne(Category);
 
-  const category = await Category.create({ name, slug: slugify(name) });
+//* @desc Update specific category by id
+//* @route PUT /categories/:id
+//* @access Private
+const updateCategoryById = updateOne(Category);
 
-  res.status(201).json({ data: category });
-});
+//* @desc Delete specific category by id
+//* @route DELETE /categories/:id
+//* @access Private
+const deleteCategoryById = deleteOne(Category);
 
 module.exports = {
   getCategories,
